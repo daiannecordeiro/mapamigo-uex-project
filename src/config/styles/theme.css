@@ -1,0 +1,31 @@
+:root {
+  /* Cores principais */
+  --color-primary: #3d2979;
+  --color-secondary: #83ebc2;
+
+  /* Neutros */
+  --color-white: #ffffff;
+  --color-fake-white: #fafafa;
+  --color-fake-black: #2A2A2A;
+  --color-dark-grey: #4b4b4b;
+  --color-medium-grey: #6f6f6f;
+  --color-grey: #e1e1e1;
+
+  /* Status */
+  --color-positive-green: #7fe48e;
+  --color-negative-red: #be5557;
+
+  /* Tipografia */
+  --font-family: 'Fredoka', sans-serif;
+  --font-size-xxs: 0.5rem;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-xxl: 2rem;
+
+  --font-weight-light: 200;
+  --font-weight-regular: 400;
+  --font-weight-bold: 700;
+}
