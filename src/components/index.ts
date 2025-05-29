@@ -1,3 +1,5 @@
 export { default as PrivateRoute } from './common/private-route/private-route'
 export { default as Button } from './mwc/button/button'
 export { default as Input } from './mwc/input/input'
+export { default as LoginForm } from './common/forms/login-form/login-form'
+export { default as RegisterForm } from './common/forms/register-form/register-form'

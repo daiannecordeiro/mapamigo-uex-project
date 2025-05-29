@@ -1,12 +1,15 @@
 import { FC } from 'react'
+import styles from '../auth.module.css'
+import { MapImageBoy } from '@/assets'
+import { RegisterForm } from '@/components'
 
 const Register: FC = () => {
-    return (
-        <div className="not-found">
-            <h1>404 - Page Not Found</h1>
-            <p>The page you are looking for does not exist.</p>
-        </div>
-    )
+  return (
+    <div className={styles.container}>
+      <img src={MapImageBoy} className={styles.illustration} />
+      <RegisterForm />
+    </div>
+  )
 }
 
 export default Register
