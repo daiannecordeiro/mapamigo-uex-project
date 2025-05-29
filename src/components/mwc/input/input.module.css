@@ -1,0 +1,17 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+md-outlined-text-field {
+  width: 100%;
+}
+
+.errorMessage {
+  color: var(--color-negative-red);
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
