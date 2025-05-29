@@ -1,0 +1,5 @@
+export { default as Logo } from './mapamigo-logo.svg'
+export { default as Icon } from './mapamigo-icon.svg'
+export { default as MapImageBoy } from './map-image-boy.svg'
+export { default as MapImageGirl } from './map-image-girl.svg'
+export { default as NotFoundImage } from './not-found-image.svg'
