@@ -1,0 +1,11 @@
+.button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: inherit;
+  width: 100%;
+  font-size: medium;
+  padding: 0 1rem;
+}
