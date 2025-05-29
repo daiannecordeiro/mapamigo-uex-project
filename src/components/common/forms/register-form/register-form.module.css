@@ -1,0 +1,53 @@
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 70%;
+  height: 100%;
+  padding: 5rem;
+  gap: 1rem;
+  background-color: var(--color-white);
+  border-radius: 32px 0  0 32px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  width: 30vw;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+.successMessage {
+  color: var(--color-positive-green);
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 952px) {
+  .logo {
+    width: 75vw;
+  }
+
+  .formContainer {
+    width: 100%;
+    border-radius: 0;
+    padding: 5rem;
+  }
+
+  md-filled-button, md-outlined-button, md-outlined-text-field {
+  width: 100%;
+  }
+}
+
+@media (max-width: 500px) {
+  .logo {
+    width: 80vw;
+  }
+
+  .formContainer {
+    padding: 2rem;
+  }
+}
+
