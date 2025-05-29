@@ -1,13 +1,12 @@
-import '@/config/styles/global.css';
-import mapamigoLogo from './assets/mapamigo-logo.svg'
+import { BrowserRouter } from 'react-router-dom';
+import { AppRoutes } from './config/routes/routes.route';
 
 function App() {
   return (
-    <>
-          <img src={mapamigoLogo} className="logo" alt="logo" />  
-          <h1>Seu gerenciador de endereços</h1>
-    </>
-  )
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
