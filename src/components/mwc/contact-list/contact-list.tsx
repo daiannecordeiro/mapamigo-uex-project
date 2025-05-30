@@ -2,7 +2,7 @@
 // @ts-nocheck
 import { FC } from 'react'
 import { IContact } from '@/services'
-import styles from './list.module.css'
+import styles from './contact-list.module.css'
 
 interface IContactListProps {
   contacts: IContact[]
