@@ -1,0 +1,36 @@
+md-dialog {
+  position: fixed;
+  z-index: 1000;
+  width: 40%;
+  margin: auto;
+  border-radius: 8px;
+}
+
+.headline {
+  padding: 1rem 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.content {
+  padding: 0 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.actions {
+  padding: 2rem 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.children {
+  padding: 2rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  width: 100%;
+}
