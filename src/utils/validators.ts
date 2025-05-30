@@ -1,24 +1,27 @@
 import { isValidCredentials, User } from "@/services"
 
-export const validateEmail = (value: string): string => {
-  const emailRegex = /^[^@]+@[^@]+\.[^@]{2,}$/
-  if (!emailRegex.test(value)) return 'E-mail inválido.'
-  return ''
-}
-
-export const validateLoginPassword = (value: string) => {
-  if (!value.trim()) return 'Senha é obrigatória.'
-  return ''
-}
+export const validateNotEmpty = (value: string): string =>
+  value.trim() === '' ? 'Campo obrigatório' : ''
 
 export const validateName = (value: string): string => {
   if (!value.trim()) return 'O nome é obrigatório.'
   return ''
 }
 
+export const validateEmail = (value: string): string => {
+  const emailRegex = /^[^@]+@[^@]+\.[^@]{2,}$/
+  if (!emailRegex.test(value)) return 'E-mail inválido.'
+  return ''
+}
+
 export const validatePassword = (value: string): string => {
   if (!value.trim()) return 'A senha é obrigatória.'
   if (value.length < 6) return 'A senha deve ter no mínimo 6 caracteres.'
+  return ''
+}
+
+export const validateLoginPassword = (value: string) => {
+  if (!value.trim()) return 'Senha é obrigatória.'
   return ''
 }
 
@@ -72,5 +75,47 @@ export const validatePasswordChange = (
     return 'A nova senha e a confirmação não coincidem.'
   }
 
+  return null
+}
+
+export const validateCpf = (cpf: string): string => {
+  const cleanCpf = cpf.replace(/\D/g, '')
+  if (!/^\d{11}$/.test(cleanCpf)) return 'CPF inválido'
+
+  const isValid = (cpf: string): boolean => {
+    let sum = 0
+    let remainder
+
+    for (let i = 1; i <= 9; i++)
+      sum += parseInt(cpf[i - 1]) * (11 - i)
+    remainder = (sum * 10) % 11
+    if (remainder === 10 || remainder === 11) remainder = 0
+    if (remainder !== parseInt(cpf[9])) return false
+
+    sum = 0
+    for (let i = 1; i <= 10; i++)
+      sum += parseInt(cpf[i - 1]) * (12 - i)
+    remainder = (sum * 10) % 11
+    if (remainder === 10 || remainder === 11) remainder = 0
+    if (remainder !== parseInt(cpf[10])) return false
+
+    return true
+  }
+
+  return isValid(cleanCpf) ? '' : 'CPF inválido'
+}
+
+export const validateUF = (value: string): string =>
+  /^[A-Z]{2}$/.test(value.toUpperCase()) ? '' : 'UF inválida (ex: RJ)'
+
+export const validateCepFormat = (value: string): string =>
+  /^\d{5}-?\d{3}$/.test(value) ? '' : 'CEP inválido'
+
+export const validatePhone = (value: string): string =>
+  /^\(\d{2}\)\s?(9\d{4}|\d{4})-\d{4}$/.test(value) ? '' : 'Telefone inválido'
+
+export const validateCEP = (cep: string): string | null => {
+  const cepRegex = /^\d{5}-\d{3}$/
+  if (!cepRegex.test(cep)) return 'CEP inválido.'
   return null
 }
