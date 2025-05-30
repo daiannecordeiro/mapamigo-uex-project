@@ -1,0 +1,7 @@
+md-icon-button,
+md-filled-icon-button,
+md-outlined-icon-button {
+  cursor: pointer;
+  padding: 0 0.5rem;
+  color: var(--color-primary);
+}
