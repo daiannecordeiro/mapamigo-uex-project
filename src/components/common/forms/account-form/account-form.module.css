@@ -1,0 +1,44 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+  width: 100%;
+  gap: 2rem;
+  padding: 2rem;
+  text-align: start;
+}
+
+h2{
+  font-size: 1.5rem;
+  margin-right: auto;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: start;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: row;
+  height: 48px;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.error {
+  color: #d32f2f;
+  font-size: 0.875rem;
+  margin: -0.5rem 0 0;
+}
+
+.success {
+  color: #388e3c;
+  font-size: 0.875rem;
+  margin: -0.5rem 0 0;
+}
