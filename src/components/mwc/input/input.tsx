@@ -14,6 +14,7 @@ interface InputFieldProps {
   error?: string;
   disabled?: boolean;
   loading?: boolean;
+  maxlength?: number;
 }
 
 const InputField: FC<InputFieldProps> = ({
@@ -26,6 +27,7 @@ const InputField: FC<InputFieldProps> = ({
   error,
   disabled = false,
   loading = false,  
+  maxlength,
 }) => {
   return (
     <div className={styles.container}>
@@ -41,6 +43,7 @@ const InputField: FC<InputFieldProps> = ({
         classname={styles.input}
         disabled={disabled}
         loading={loading}
+        maxlength={maxlength}
       ></md-outlined-text-field>
     </div>
   );
