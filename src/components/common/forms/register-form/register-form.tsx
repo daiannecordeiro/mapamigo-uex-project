@@ -1,162 +1,155 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import styles from './register-form.module.css'
 import { Logo } from '@/assets'
-import { Button, Input } from '@/components'
-import { useAuth, useNavigate } from '@/hooks'
+import { Button, Input, SnackBar } from '@/components'
+import { useAuth, useForm, useNavigate } from '@/hooks'
 import {
   validateName,
   validateEmail,
   validatePassword,
-  validateConfirmPassword
-} from '@/utils/validators'
+  validateConfirmPassword,
+  capitalize
+} from '@/utils'
+
+const initialForm = {
+  name: '',
+  email: '',
+  password: '',
+  confirmPassword: ''
+}
+
+const requiredFormFields: (keyof typeof initialForm)[] = [
+  'name',
+  'email',
+  'password',
+  'confirmPassword'
+]
+
+const maskers = {
+  name: capitalize,
+  email: (value: string) => value.trim(),
+  password: (value: string) => value.trim(),
+  confirmPassword: (value: string) => value.trim()
+}
 
 const RegisterForm: FC = () => {
   const { navigate } = useNavigate()
   const { register } = useAuth()
 
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  })
+  const [success, setSuccess] = useState('')
 
-  const [errors, setErrors] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  })
-
-  const [formSuccess, setFormSuccess] = useState('')
-  const [formValid, setFormValid] = useState(false)
-
-  const validateField = (field: string, value: string) => {
-    switch (field) {
-      case 'name':
-        return validateName(value)
-      case 'email':
-        return validateEmail(value)
-      case 'password':
-        return validatePassword(value)
-      case 'confirmPassword':
-        return validateConfirmPassword(value, formData.password)
-      default:
-        return ''
-    }
+  const validators = {
+    name: validateName,
+    email: validateEmail,
+    password: validatePassword,
+    confirmPassword: (value: string): string => validateConfirmPassword(value, form.password)
   }
+  const {
+    values: form,
+    errors,
+    updateField,
+    validateAll,
+    resetForm,
+    setErrors,
+    isFormValid,
+    handleBlur
+  } = useForm(initialForm, validators, maskers, requiredFormFields)
 
-  const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-    setErrors((prev) => ({ ...prev, [field]: validateField(field, value) }))
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
 
-  useEffect(() => {
-    if (formData.confirmPassword) {
-      setErrors((prev) => ({
-        ...prev,
-        confirmPassword: validateConfirmPassword(formData.confirmPassword, formData.password)
-      }))
-    }
+    const newErros = validateAll()
+    const hasErrors = Object.values(newErros).some(Boolean)
+    if (hasErrors) return
 
-    const noErrors = Object.values(errors).every((err) => err === '')
-    const allFilled = Object.values(formData).every((val) => val.trim() !== '')
+    try {
+      const result = await register({
+        name: form.name,
+        email: form.email,
+        password: form.password
+      })
 
-    setFormValid(noErrors && allFilled)
-  }, [formData, errors])
+      if (!result) {
+        setErrors((prev) => ({ ...prev, general: 'Erro ao cadastrar usuário. Tente novamente.' }))
+        return
+      }
 
-  const handleSubmit = async () => {
-    const newErrors = {
-      name: validateName(formData.name),
-      email: validateEmail(formData.email),
-      password: validatePassword(formData.password),
-      confirmPassword: validateConfirmPassword(formData.confirmPassword, formData.password)
-    }
-
-    setErrors(newErrors)
-
-    if (Object.values(newErrors).some((err) => err !== '')) return
-
-    const result = await register({
-      name: formData.name,
-      email: formData.email,
-      password: formData.password
-    })
-
-    if (result) {
-      setFormSuccess('')
-      setErrors((prev) => ({ ...prev, email: result }))
-    } else {
-      setFormSuccess('Usuário cadastrado com sucesso!')
-      setFormData({ name: '', email: '', password: '', confirmPassword: '' })
-      setErrors({ name: '', email: '', password: '', confirmPassword: '' })
+      setSuccess('Cadastro realizado com sucesso!')
+      resetForm()
+    } catch (error) {
+      console.error('Erro ao cadastrar usuário:', error)
+      setErrors((prev) => ({ ...prev, general: 'Erro ao cadastrar usuário. Tente novamente.' }))
     }
   }
 
   return (
-    <div className={styles.formContainer}>
+    <form className={styles.formContainer} onSubmit={handleSubmit}>
       <img src={Logo} className={styles.logo} />
-      {!formSuccess && (
+      {!success && (
         <>
           <p>Preencha os dados abaixo para realizar seu cadastro:</p>
           <Input
             label='nome'
             placeholder='Seu nome aqui'
             type='text'
-            value={formData.name}
-            onChange={(e) => handleChange('name', e)}
-            onBlur={() => setErrors((prev) => ({ ...prev, name: validateName(formData.name) }))}
+            value={form.name}
+            onChange={(v) => updateField('name', v)}
+            onBlur={() => handleBlur('name')}
             error={errors.name}
           />
           <Input
             label='e-mail'
             placeholder='Seu melhor e-mail aqui'
             type='email'
-            value={formData.email}
-            onChange={(e) => handleChange('email', e)}
-            onBlur={() => setErrors((prev) => ({ ...prev, email: validateEmail(formData.email) }))}
+            value={form.email}
+            onChange={(v) => updateField('email', v)}
+            onBlur={() => handleBlur('email')}
             error={errors.email}
           />
           <Input
             label='senha'
             type='password'
-            value={formData.password}
-            onChange={(e) => handleChange('password', e)}
-            onBlur={() =>
-              setErrors((prev) => ({ ...prev, password: validatePassword(formData.password) }))
-            }
+            value={form.password}
+            onChange={(e) => updateField('password', e)}
+            onBlur={() => handleBlur('password')}
             error={errors.password}
           />
           <Input
             label='confirmar senha'
             type='password'
-            value={formData.confirmPassword}
-            onChange={(e) => handleChange('confirmPassword', e)}
-            onBlur={() =>
-              setErrors((prev) => ({
-                ...prev,
-                confirmPassword: validateConfirmPassword(
-                  formData.confirmPassword,
-                  formData.password
-                )
-              }))
-            }
+            value={form.confirmPassword}
+            onChange={(e) => updateField('confirmPassword', e)}
+            onBlur={() => handleBlur('confirmPassword')}
             error={errors.confirmPassword}
           />
         </>
       )}
       {errors.password && <span className={styles.errorMessage}>{errors.password}</span>}
 
-      {formSuccess && <p className={styles.successMessage}>{formSuccess}</p>}
-      {!formSuccess && (
-        <Button disabled={!formValid} onClick={handleSubmit}>
+      {success && <p className={styles.successMessage}>{success}</p>}
+      {!success && (
+        <Button type='submit' disabled={!isFormValid}>
           Cadastrar
         </Button>
       )}
-      <Button variant='outlined' onClick={() => navigate('/login')}>
+      <Button type='button' variant='outlined' onClick={() => navigate('/login')}>
         Voltar ao Login
       </Button>
-    </div>
+
+      <SnackBar
+        message={errors.general}
+        open={!!errors.general}
+        variant='danger'
+        onClose={() => setErrors((prev) => ({ ...prev, general: '' }))}
+      />
+
+      <SnackBar
+        open={!!success}
+        message={success}
+        variant='success'
+        onClose={() => setSuccess('')}
+      />
+    </form>
   )
 }
 
