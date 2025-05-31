@@ -112,7 +112,7 @@ export const validateCepFormat = (value: string): string =>
   /^\d{5}-?\d{3}$/.test(value) ? '' : 'CEP inválido'
 
 export const validatePhone = (value: string): string =>
-  /^\(\d{2}\)\s?(9\d{4}|\d{4})-\d{4}$/.test(value) ? '' : 'Telefone inválido'
+  /^\(\d{2}\) (9\d{4}|\d{4})-\d{4}$/.test(value) ? '' : 'Telefone inválido';
 
 export const validateCEP = (cep: string): string | null => {
   const cepRegex = /^\d{5}-\d{3}$/
