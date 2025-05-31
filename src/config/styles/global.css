@@ -39,7 +39,7 @@ md-icon {
   /* Cores principais */
   --md-sys-color-primary: var(--color-primary);
   --md-sys-color-on-primary: var(--color-fake-white);
-  --md-sys-color-primary-container: var(--color-dark-grey);
+  --md-sys-color-primary-container: var(--color-fake-white);
   --md-sys-color-on-primary-container: var(--color-primary);
 
   /* Cores secundárias */
