@@ -1,127 +1,196 @@
-import { FC, useEffect, useMemo, useState, useCallback } from 'react'
-import styles from './account-form.module.css'
-import { Button, Dialog, Input, SnackBar } from '@/components'
-import { useAuth, useNavigate } from '@/hooks'
-import { validateEmailInUse, validatePasswordChange } from '@/utils'
+import { FC, useEffect, useMemo, useCallback, useState } from "react";
+import styles from "./account-form.module.css";
+import { Button, Dialog, Input, SnackBar } from "@/components";
+import { useAuth, useNavigate, useForm } from "@/hooks";
+import {
+  capitalize,
+  validateEmailInUse,
+  validatePasswordChange,
+  validateName,
+  validatePassword,
+} from "@/utils";
 
 const AccountForm: FC = () => {
-  const { user, update, deleteAccount } = useAuth()
-  const { navigate } = useNavigate()
+  const { user, update, deleteAccount } = useAuth();
+  const { navigate } = useNavigate();
 
-  const [openDialog, setOpenDialog] = useState(false)
+  const initialAccountValues = useMemo(
+    () => ({
+      name: user?.name || "",
+      email: user?.email || "",
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    }),
+    [user]
+  );
 
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
-  })
+  const validators = {
+    name: (value: string) => validateName(value),
+    email: (value: string) => {
+      const result = validateEmailInUse(
+        JSON.parse(localStorage.getItem("mapamigo_users") || "[]"),
+        value,
+        user?.email || ""
+      );
+      return result ?? "";
+    },
+    newPassword: (value: string) => {
+      if (value.trim()) {
+        return validatePassword(value);
+      }
+      return "";
+    },
+    confirmPassword: (value: string): string => {
+      if (values.newPassword.trim() && value !== values.newPassword) {
+        return "As senhas não coincidem.";
+      }
+      return "";
+    },
+  };
 
-  const [originalEmail, setOriginalEmail] = useState('')
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [success, setSuccess] = useState('')
+  const maskers = useMemo(
+    () => ({
+      name: capitalize,
+      email: (value: string) => value.trim(),
+      password: (value: string) => value.trim(),
+      confirmPassword: (value: string) => value.trim(),
+    }),
+    []
+  );
+
+  const {
+    values,
+    errors,
+    updateField,
+    setErrors,
+    validateAll,
+    setValues,
+    handleBlur,
+  } = useForm(initialAccountValues, validators, maskers, ["name", "email"]);
+
+  const [originalEmail, setOriginalEmail] = useState("");
+  const [openDialog, setOpenDialog] = useState(false);
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     if (user) {
-      setFormData((prev) => ({
+      setValues((prev) => ({
         ...prev,
         name: user.name,
-        email: user.email
-      }))
-      setOriginalEmail(user.email)
+        email: user.email,
+      }));
+      setOriginalEmail(user.email);
     }
-  }, [user])
+  }, [user, setValues]);
 
   const isPasswordChangeAttempted = useMemo(() => {
-    const { currentPassword, newPassword, confirmPassword } = formData
-    return !!(currentPassword || newPassword || confirmPassword)
-  }, [formData])
+    const { currentPassword, newPassword, confirmPassword } = values;
+    return !!(currentPassword || newPassword || confirmPassword);
+  }, [values]);
 
   const isSaveDisabled = useMemo(() => {
-    const nameUnchanged = formData.name.trim() === user?.name
-    const emailUnchanged = formData.email.trim() === originalEmail
-    const nameEmpty = formData.name.trim() === ''
-    const emailEmpty = formData.email.trim() === ''
+    const nameUnchanged = values.name.trim() === user?.name;
+    const emailUnchanged = values.email.trim() === originalEmail;
+    const nameEmpty = values.name.trim() === "";
+    const emailEmpty = values.email.trim() === "";
     return (
-      (nameUnchanged && emailUnchanged && !isPasswordChangeAttempted) || nameEmpty || emailEmpty
-    )
-  }, [formData, user?.name, originalEmail, isPasswordChangeAttempted])
-
-  const handleChange = useCallback((key: keyof typeof formData, value: string) => {
-    setFormData((prev) => ({ ...prev, [key]: value }))
-  }, [])
+      (nameUnchanged && emailUnchanged && !isPasswordChangeAttempted) ||
+      nameEmpty ||
+      emailEmpty
+    );
+  }, [values, user?.name, originalEmail, isPasswordChangeAttempted]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
-      e.preventDefault()
-      setErrors({})
-      setSuccess('')
+      e.preventDefault();
+      setErrors((prev) => ({ ...prev, general: "" }));
+      setSuccess("");
 
-      const newErrors: Record<string, string> = {}
-      const { name, email, currentPassword, newPassword, confirmPassword } = formData
+      const validationErrors = validateAll();
+      const newErrors: typeof validationErrors = { ...validationErrors };
 
-      if (!name.trim()) newErrors.name = 'Nome é obrigatório.'
-      if (!email.trim()) newErrors.email = 'E-mail é obrigatório.'
+      const { name, email, currentPassword, newPassword, confirmPassword } =
+        values;
 
-      const nameUnchanged = name === user?.name
-      const emailUnchanged = email === originalEmail
+      if (!name.trim()) newErrors.name = "Nome é obrigatório.";
+      if (!email.trim()) newErrors.email = "E-mail é obrigatório.";
 
-      if (nameUnchanged && emailUnchanged && !isPasswordChangeAttempted) return
+      const nameUnchanged = name === user?.name;
+      const emailUnchanged = email === originalEmail;
+
+      if (nameUnchanged && emailUnchanged && !isPasswordChangeAttempted) return;
 
       if (user) {
-        const users = JSON.parse(localStorage.getItem('mapamigo_users') || '[]')
-        const emailError = validateEmailInUse(users, email, originalEmail)
-        if (emailError) newErrors.email = emailError
+        const users = JSON.parse(
+          localStorage.getItem("mapamigo_users") || "[]"
+        );
+        const emailError = validateEmailInUse(users, email, originalEmail);
+        if (emailError) newErrors.email = emailError;
       }
 
       if (isPasswordChangeAttempted) {
         if (user?.password !== currentPassword) {
-          newErrors.currentPassword = 'A senha atual está incorreta.'
+          newErrors.currentPassword = "A senha atual está incorreta.";
         } else {
           const passwordError = validatePasswordChange(
             originalEmail,
             currentPassword,
             newPassword,
             confirmPassword
-          )
+          );
           if (passwordError) {
-            if (passwordError.includes('nova senha')) newErrors.newPassword = passwordError
-            else if (passwordError.includes('confirmar')) newErrors.confirmPassword = passwordError
-            else newErrors.general = passwordError
+            if (passwordError.includes("nova senha"))
+              newErrors.newPassword = passwordError;
+            else if (passwordError.includes("confirmar"))
+              newErrors.confirmPassword = passwordError;
+            else newErrors.general = passwordError;
           }
         }
       }
 
-      if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors)
-        return
+      const hasError = Object.values(newErrors).some((v) => v !== "");
+      if (hasError) {
+        setErrors(newErrors);
+        return;
       }
 
-      const updatedPassword = isPasswordChangeAttempted ? newPassword : user?.password ?? ''
-      const error = await update({ name, email, password: updatedPassword })
+      const updatedPassword = isPasswordChangeAttempted
+        ? newPassword
+        : user?.password ?? "";
+      const error = await update({ name, email, password: updatedPassword });
 
       if (error) {
-        setErrors({ general: error })
-        return
+        setErrors((prev) => ({ ...prev, general: error }));
+        return;
       }
 
-      setSuccess('Alterações salvas com sucesso!')
-      setOriginalEmail(email)
-      setFormData((prev) => ({
+      setSuccess("Alterações salvas com sucesso!");
+      setOriginalEmail(email);
+
+      setValues((prev) => ({
         ...prev,
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: ''
-      }))
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      }));
     },
-    [formData, isPasswordChangeAttempted, originalEmail, update, user]
-  )
+    [
+      values,
+      isPasswordChangeAttempted,
+      originalEmail,
+      update,
+      user,
+      validateAll,
+      setErrors,
+      setValues,
+    ]
+  );
 
   const handleDelete = useCallback(async () => {
-    await deleteAccount()
-    navigate('/login')
-  }, [deleteAccount, navigate])
+    await deleteAccount();
+    navigate("/login");
+  }, [deleteAccount, navigate]);
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
@@ -129,75 +198,83 @@ const AccountForm: FC = () => {
 
       <div className={styles.inputGroup}>
         <Input
-          label='Nome'
-          value={formData.name}
-          onChange={(v) => handleChange('name', v)}
+          label="Nome"
+          value={values.name}
+          onChange={(v) => updateField("name", v)}
           error={errors.name}
+          onBlur={() => handleBlur("name")}
         />
         <Input
-          label='E-mail'
-          type='email'
-          value={formData.email}
-          onChange={(v) => handleChange('email', v)}
+          label="E-mail"
+          type="email"
+          value={values.email}
+          onChange={(v) => updateField("email", v)}
           error={errors.email}
+          onBlur={() => handleBlur("email")}
         />
       </div>
 
       <div className={styles.inputGroup}>
         <Input
-          label='Senha atual'
-          type='password'
-          value={formData.currentPassword}
-          onChange={(v) => handleChange('currentPassword', v)}
+          label="Senha atual"
+          type="password"
+          value={values.currentPassword}
+          onChange={(v) => updateField("currentPassword", v)}
           error={errors.currentPassword}
         />
         <Input
-          label='Nova senha'
-          type='password'
-          value={formData.newPassword}
-          onChange={(v) => handleChange('newPassword', v)}
+          label="Nova senha"
+          type="password"
+          value={values.newPassword}
+          onChange={(v) => updateField("newPassword", v)}
           error={errors.newPassword}
+          onBlur={() => handleBlur("newPassword")}
         />
         <Input
-          label='Confirmar nova senha'
-          type='password'
-          value={formData.confirmPassword}
-          onChange={(v) => handleChange('confirmPassword', v)}
+          label="Confirmar nova senha"
+          type="password"
+          value={values.confirmPassword}
+          onChange={(v) => updateField("confirmPassword", v)}
           error={errors.confirmPassword}
+          onBlur={() => handleBlur("confirmPassword")}
         />
       </div>
 
       <SnackBar
-        message={errors.general ?? ''}
+        message={errors.general ?? ""}
         open={!!errors.general}
-        variant='danger'
-        onClose={() => setErrors((prev) => ({ ...prev, general: '' }))}
+        variant="danger"
+        onClose={() => setErrors((prev) => ({ ...prev, general: "" }))}
       />
       <SnackBar
         open={!!success}
         message={success}
-        variant='success'
-        onClose={() => setSuccess('')}
+        variant="success"
+        onClose={() => setSuccess("")}
       />
 
       <div className={styles.buttonGroup}>
-        <Button variant='outlined' onClick={() => setOpenDialog(true)} icon='delete'>
+        <Button
+          variant="outlined"
+          onClick={() => setOpenDialog(true)}
+          icon="delete"
+        >
           Excluir Conta
         </Button>
-        <Button type='submit' variant='filled' disabled={isSaveDisabled}>
+        <Button type="submit" variant="filled" disabled={isSaveDisabled}>
           Salvar Alterações
         </Button>
       </div>
 
       <Dialog
         open={openDialog}
-        title='Confirmar exclusão'
-        message='Tem certeza de que deseja excluir sua conta? Essa ação não poderá ser desfeita.'
+        title="Confirmar exclusão"
+        message="Tem certeza de que deseja excluir sua conta? Essa ação não poderá ser desfeita."
         onCancel={() => setOpenDialog(false)}
         onConfirm={handleDelete}
       />
     </form>
-  )
-}
+  );
+};
 
-export default AccountForm
+export default AccountForm;
