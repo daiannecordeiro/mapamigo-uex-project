@@ -28,7 +28,7 @@ export function createUser(newUser: User): string | null {
 
   users.push(newUser);
   saveUsers(users);
-  return null;
+  return "Usuário cadastrado com sucesso.";
 }
 
 // READ: retorna o usuário logado atualmente
