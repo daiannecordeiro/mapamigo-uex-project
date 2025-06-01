@@ -9,6 +9,7 @@ import {
   validateName,
   validatePassword,
 } from "@/utils";
+import { isValidCredentials } from "@/services";
 
 const AccountForm: FC = () => {
   const { user, update, deleteAccount } = useAuth();
@@ -72,6 +73,7 @@ const AccountForm: FC = () => {
   const [originalEmail, setOriginalEmail] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [success, setSuccess] = useState("");
+  const [passwordToDelete, setPasswordToDelete] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -112,9 +114,6 @@ const AccountForm: FC = () => {
 
       const { name, email, currentPassword, newPassword, confirmPassword } =
         values;
-
-      if (!name.trim()) newErrors.name = "Nome é obrigatório.";
-      if (!email.trim()) newErrors.email = "E-mail é obrigatório.";
 
       const nameUnchanged = name === user?.name;
       const emailUnchanged = email === originalEmail;
@@ -188,9 +187,19 @@ const AccountForm: FC = () => {
   );
 
   const handleDelete = useCallback(async () => {
+    if (
+      passwordToDelete &&
+      !isValidCredentials(originalEmail, passwordToDelete)
+    ) {
+      setErrors((prev) => ({
+        ...prev,
+        general: "A senha atual está incorreta.",
+      }));
+      return;
+    }
     await deleteAccount();
     navigate("/login");
-  }, [deleteAccount, navigate]);
+  }, [deleteAccount, navigate, originalEmail, passwordToDelete, setErrors]);
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
@@ -269,9 +278,27 @@ const AccountForm: FC = () => {
       <Dialog
         open={openDialog}
         title="Confirmar exclusão"
-        message="Tem certeza de que deseja excluir sua conta? Essa ação não poderá ser desfeita."
         onCancel={() => setOpenDialog(false)}
         onConfirm={handleDelete}
+        children={
+          <>
+            <p>
+              Tem certeza de que deseja excluir sua conta? Essa ação não poderá
+              ser desfeita.
+            </p>
+            <Input
+              label="Digite sua senha para confirmar"
+              type="password"
+              value={passwordToDelete}
+              onChange={(v) => setPasswordToDelete(v)}
+              error={
+                passwordToDelete && passwordToDelete.trim() === ""
+                  ? "Campo obrigatório"
+                  : ""
+              }
+            />
+          </>
+        }
       />
     </form>
   );
