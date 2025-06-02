@@ -23,9 +23,10 @@ Este é um projeto de estudo e teste técnico para a empresa UEX.
 ## 🛠️ Tecnologias Utilizadas
 
 * **React** + **TypeScript** + **Vite**
+* **ViaCEP API**
 * **Google Maps JavaScript API**
 * **CSS Modules**
-* **Material Design 3**
+* **Web Components - Material Design 3**
 
 ## 📦 Instalação
 
@@ -48,13 +49,12 @@ npm install
 VITE_GOOGLE_MAPS_API_KEY=YOUR_GOOGLE_MAPS_API_KEY
 ```
 
-
 4. Inicie o servidor de desenvolvimento:
 
 ```bash
 npm run dev
 ```
-O projeto estará disponível em: http://localhost:5173
+O projeto estará disponível em: http://localhost:3000 e abrirá automáticamente no seu navegador principal.
 
 ## 📁 Estrutura de Pastas
 
