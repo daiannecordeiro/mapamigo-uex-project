@@ -72,6 +72,7 @@ const AccountForm: FC = () => {
   const [success, setSuccess] = useState('')
   const [passwordToDelete, setPasswordToDelete] = useState('')
 
+  // Preenche os campos com os dados iniciais do usuário atual
   useEffect(() => {
     if (user) {
       setValues((prev) => ({
@@ -83,11 +84,13 @@ const AccountForm: FC = () => {
     }
   }, [user, setValues])
 
+  // Verifica se houve tentativa de alteração de senha
   const isPasswordChangeAttempted = useMemo(() => {
     const { currentPassword, newPassword, confirmPassword } = values
     return !!(currentPassword || newPassword || confirmPassword)
   }, [values])
 
+  // Verifica se o botão de salvar deve ser desabilitado
   const isSaveDisabled = useMemo(() => {
     const nameUnchanged = values.name.trim() === user?.name
     const emailUnchanged = values.email.trim() === originalEmail
@@ -98,6 +101,7 @@ const AccountForm: FC = () => {
     )
   }, [values, user?.name, originalEmail, isPasswordChangeAttempted])
 
+  // Função para lidar com o envio do formulário
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault()
@@ -174,6 +178,7 @@ const AccountForm: FC = () => {
     ]
   )
 
+  // Função para lidar com a exclusão da conta
   const handleDelete = useCallback(async () => {
     if (passwordToDelete && !isValidCredentials(originalEmail, passwordToDelete)) {
       setErrors((prev) => ({

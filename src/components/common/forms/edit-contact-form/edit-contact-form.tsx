@@ -89,22 +89,27 @@ const EditContactForm: FC<EditContactFormProps> = ({ contact, onCancel, onSubmit
   const [success, setSuccess] = useState('')
   const [coords, setCoords] = useState<Coords | null>(null)
 
+  // busca de endereço pela API de ViaCEP  
   const rawCep = form.cep.replace(/\D/g, '')
   const shouldFetch = rawCep.length === 8
   const { address, isLoading, isError, errorMessage } = useCEP(shouldFetch ? rawCep : '')
 
+  // Google Maps Loader
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
   })
 
+  // Formata o endereço completo para geolocalização
   const hasAddressData = form.street && form.number && form.city && form.state
   const fullAddress = useMemo(
     () => (hasAddressData ? `${form.street}, ${form.number}, ${form.city} - ${form.state}` : ''),
     [hasAddressData, form.street, form.number, form.city, form.state]
   )
 
+  // Hook para obter as coordenadas geográficas do endereço
   const geolocationCoords = useGeolocation(fullAddress, isLoaded)
 
+  // Preenche os campos do formulário com os dados do contato existente
   useEffect(() => {
     if (contact) {
       setValues({
@@ -134,6 +139,7 @@ const EditContactForm: FC<EditContactFormProps> = ({ contact, onCancel, onSubmit
     }
   }, [address, setValues])
 
+  // Atualiza as coordenadas quando o endereço é carregado
   useEffect(() => {
     if (isLoaded && geolocationCoords) {
       setCoords(geolocationCoords)
@@ -142,6 +148,7 @@ const EditContactForm: FC<EditContactFormProps> = ({ contact, onCancel, onSubmit
     }
   }, [isLoaded, geolocationCoords])
 
+  // Chamado quando o formulário é enviado. Ele valida os campos, verifica se o CPF já existe e adiciona o contato.
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const newErrors = validateAll()

@@ -11,10 +11,12 @@ const ContactDetail: FC<IContactDetail> = ({ contact, onEdit, onDeleteSuccess })
   const { user } = useAuth()
   const { removeContact } = useContacts(user?.email || 'anon')
 
+  // Load Google Maps API
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
   })
 
+  // Função para lidar com a exclusão do contato
   const handleDelete = async () => {
     await removeContact(contact.id)
     setDialogOpen(false)
@@ -58,7 +60,7 @@ const ContactDetail: FC<IContactDetail> = ({ contact, onEdit, onDeleteSuccess })
           <p>CPF: {contact.cpf}</p>
           <p>Telefone: {contact.phone}</p>
           <p>
-            Endereço: {contact.address}, {contact.number}
+            Endereço: {contact.street}, {contact.number}
             {contact.complement && `, ${contact.complement}`}, {contact.neighborhood},{' '}
             {contact.city} - {contact.state} - {contact.cep}
           </p>
