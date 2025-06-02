@@ -9,6 +9,8 @@ import {
   deleteAccount as deleteAccountService,
 } from '@/services/auth.service';
 
+// Esse hook é usado para gerenciar a autenticação do usuário, permitindo login, logout, registro, atualização de dados e exclusão de conta.
+
 const CURRENT_USER_KEY = 'mapamigo_current_user';
 
 export function useAuth() {

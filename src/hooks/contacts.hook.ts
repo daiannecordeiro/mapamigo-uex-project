@@ -7,6 +7,9 @@ import {
   IContact
 } from '@/services/contacts.service';
 
+// Esse hook é usado para gerenciar os contatos de um usuário, permitindo adicionar, editar, remover e listar contatos.
+// O SWR (stale-while-revalidate) é usado para buscar e armazenar em cache os contatos do usuário.
+
 export function useContacts(userId: string) {
   const key = `contacts_${userId}`;
 

@@ -5,6 +5,8 @@ interface Coordinates {
   lng: number
 }
 
+// Esse hook é usado para obter as coordenadas geográficas (latitude e longitude) de um endereço usando a API do Google Maps.
+
 export const useGeolocation = (address: string, isLoaded: boolean): Coordinates | null => {
   const [coords, setCoords] = useState<Coordinates | null>(null)
 
