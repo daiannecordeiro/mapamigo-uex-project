@@ -282,19 +282,23 @@ const NewContactForm: FC = () => {
         </div>
       )}
 
-      <SnackBar
-        message={errors.general}
-        open={!!errors.general}
-        variant='danger'
-        onClose={() => setErrors((prev) => ({ ...prev, general: '' }))}
-      />
+      {errors.general && (
+        <SnackBar
+          message={errors.general ?? ''}
+          open={!!errors.general}
+          variant='danger'
+          onClose={() => setErrors((prev) => ({ ...prev, general: '' }))}
+        />
+      )}
 
-      <SnackBar
-        open={!!success}
-        message={success}
-        variant='success'
-        onClose={() => setSuccess('')}
-      />
+      {success && (
+        <SnackBar
+          open={!!success}
+          message={success}
+          variant='success'
+          onClose={() => setSuccess('')}
+        />
+      )}
 
       <Button type='submit' disabled={!isFormValid}>
         Salvar

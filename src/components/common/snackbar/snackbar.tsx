@@ -12,7 +12,7 @@ type Props = {
 export default function SnackBar({
   message,
   open,
-  duration = 4000,
+  duration = 1250,
   variant = 'default',
   onClose
 }: Props) {
