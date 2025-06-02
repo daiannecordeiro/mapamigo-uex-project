@@ -1,30 +1,36 @@
 import { isValidCredentials, User } from "@/services"
 
+// Validador básico de campo obrigatório
 export const validateNotEmpty = (value: string): string =>
   value.trim() === '' ? 'Campo obrigatório' : ''
 
+// Validador campo de Nome
 export const validateName = (value: string): string => {
   if (!value.trim()) return 'O nome é obrigatório.'
   return ''
 }
 
+// Validador campo de E-mail
 export const validateEmail = (value: string): string => {
   const emailRegex = /^[^@]+@[^@]+\.[^@]{2,}$/
   if (!emailRegex.test(value)) return 'E-mail inválido.'
   return ''
 }
 
+// Validador campo de Senha
 export const validatePassword = (value: string): string => {
   if (!value.trim()) return 'A senha é obrigatória.'
   if (value.length < 6) return 'A senha deve ter no mínimo 6 caracteres.'
   return ''
 }
 
+// Validador campo de Login (Senha)
 export const validateLoginPassword = (value: string) => {
   if (!value.trim()) return 'Senha é obrigatória.'
   return ''
 }
 
+// Validador campo de Confirmação de Senha
 export const validateConfirmPassword = (
   value: string,
   password: string
@@ -34,6 +40,7 @@ export const validateConfirmPassword = (
   return ''
 }
 
+// Validador de E-mail em uso
 export const validateEmailInUse = (
   users: User[],
   email: string,
@@ -52,6 +59,7 @@ export const validateEmailInUse = (
   return null
 }
 
+// Validador de Senha para alteração de senha
 export const validatePasswordChange = (
   originalEmail: string,
   currentPassword: string,
@@ -78,6 +86,7 @@ export const validatePasswordChange = (
   return null
 }
 
+// Validador de CPF
 export const validateCpf = (cpf: string): string => {
   const cleanCpf = cpf.replace(/\D/g, '')
   if (!/^\d{11}$/.test(cleanCpf)) return 'CPF inválido'
@@ -105,17 +114,14 @@ export const validateCpf = (cpf: string): string => {
   return isValid(cleanCpf) ? '' : 'CPF inválido'
 }
 
+// Validador de Estado (UF)
 export const validateUF = (value: string): string =>
   /^[A-Z]{2}$/.test(value.toUpperCase()) ? '' : 'UF inválida (ex: RJ)'
 
+// Validador de CEP
 export const validateCepFormat = (value: string): string =>
   /^\d{5}-?\d{3}$/.test(value) ? '' : 'CEP inválido'
 
+// Validador de Telefone
 export const validatePhone = (value: string): string =>
   /^\(\d{2}\) (9\d{4}|\d{4})-\d{4}$/.test(value) ? '' : 'Telefone inválido';
-
-export const validateCEP = (cep: string): string | null => {
-  const cepRegex = /^\d{5}-\d{3}$/
-  if (!cepRegex.test(cep)) return 'CEP inválido.'
-  return null
-}
