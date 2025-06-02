@@ -6,7 +6,7 @@ export interface IContact {
   cpf: string;
   phone: string;
   cep: string;
-  address: string;
+  street: string;
   number: string;
   complement?: string;
   neighborhood: string;

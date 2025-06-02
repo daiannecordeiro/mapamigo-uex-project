@@ -28,7 +28,7 @@ const initialForm = {
   cpf: '',
   phone: '',
   cep: '',
-  address: '',
+  street: '',
   number: '',
   complement: '',
   neighborhood: '',
@@ -41,7 +41,7 @@ const requiredFormFields: (keyof typeof initialForm)[] = [
   'cpf',
   'phone',
   'cep',
-  'address',
+  'street',
   'number',
   'neighborhood',
   'city',
@@ -53,7 +53,7 @@ const validators = {
   cpf: validateCpf,
   phone: validatePhone,
   cep: validateCepFormat,
-  address: validateNotEmpty,
+  street: validateNotEmpty,
   number: validateNotEmpty,
   complement: () => '',
   neighborhood: validateNotEmpty,
@@ -94,7 +94,7 @@ const NewContactForm: FC = () => {
 
   useEffect(() => {
     if (address) {
-      updateField('address', address.logradouro || '')
+      updateField('street', address.logradouro || '')
       updateField('neighborhood', address.bairro || '')
       updateField('city', address.localidade || '')
       updateField('state', address.uf || '')
@@ -107,10 +107,10 @@ const NewContactForm: FC = () => {
   })
 
   const hasAddressData =
-    form.address.trim() && form.number.trim() && form.city.trim() && form.state.trim()
+    form.street.trim() && form.number.trim() && form.city.trim() && form.state.trim()
 
   const fullAddress = hasAddressData
-    ? `${form.address}, ${form.number}, ${form.city} - ${form.state}`
+    ? `${form.street}, ${form.number}, ${form.city} - ${form.state}`
     : ''
 
   const geolocationCoords = useGeolocation(fullAddress, isLoaded)
@@ -198,11 +198,11 @@ const NewContactForm: FC = () => {
       <div className={styles.inputGroup}>
         <Input
           label='Logradouro'
-          value={form.address}
-          onChange={(v) => updateField('address', v)}
+          value={form.street}
+          onChange={(v) => updateField('street', v)}
           disabled={isLoading}
-          error={errors.address}
-          onBlur={() => handleBlur('address')}
+          error={errors.street}
+          onBlur={() => handleBlur('street')}
         />
         <Input
           label='Número'
