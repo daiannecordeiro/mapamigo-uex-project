@@ -1,3 +1,4 @@
+// Máscara de CPF
 export const maskCpf = (value: string): string =>
   value
     .replace(/\D/g, '')
@@ -6,6 +7,7 @@ export const maskCpf = (value: string): string =>
     .replace(/(\d{3})(\d)/, '$1.$2')
     .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
 
+// Máscara de Telefone fixo ou celular
 export const maskPhone = (value: string): string => {
   const cleaned = value.replace(/\D/g, '').slice(0, 11);
 
@@ -20,6 +22,7 @@ export const maskPhone = (value: string): string => {
   }
 };
 
+// Máscara de CEP
 export const maskCep = (value: string): string =>
   value
     .replace(/\D/g, '')
