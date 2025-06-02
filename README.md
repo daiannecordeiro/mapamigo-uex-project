@@ -33,7 +33,7 @@ Este é um projeto de estudo e teste técnico para a empresa UEX.
 1. Clone o repositório:
 
 ```bash
-git clone https://github.com/seu-usuario/mapamigo.git
+git clone https://github.com/daiannecordeiro/mapamigo-uex-project.git
 cd mapamigo
 ```
 
