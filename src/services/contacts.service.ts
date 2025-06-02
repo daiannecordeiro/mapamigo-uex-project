@@ -16,19 +16,22 @@ export interface IContact {
   longitude: number;
 }
 
+// GET da chave de armazenamento de contatos um usuário específico
 function getStorageKey(userId: string): string {
   return `${STORAGE_KEY_PREFIX}${userId}`;
 }
 
+// GET de todos os contatos de um usuário do localStorage
 function getContacts(userId: string): IContact[] {
   return JSON.parse(localStorage.getItem(getStorageKey(userId)) || '[]');
 }
 
+// WRITE: Salva os contatos de um usuário no localStorage
 function saveContacts(userId: string, contacts: IContact[]) {
   localStorage.setItem(getStorageKey(userId), JSON.stringify(contacts));
 }
 
-// CREATE
+// CREATE: Cria um novo contato
 export function createContact(userId: string, contact: IContact) {
   const contacts = getContacts(userId);
 
@@ -40,22 +43,22 @@ export function createContact(userId: string, contact: IContact) {
   saveContacts(userId, contacts);
 }
 
-// READ (todos)
+// READ (todos os contatos de um usuário)
 export function getAllContacts(userId: string): IContact[] {
   return getContacts(userId);
 }
 
-// READ (por id)
+// READ (por ID do contato)
 export function getContactById(userId: string, id: string): IContact | undefined {
   return getContacts(userId).find(contact => contact.id === id);
 }
 
-// READ (por CPF)
+// READ (por CPF do contato)
 export function getContactByCpf(userId: string, cpf: string): IContact | undefined {
   return getContacts(userId).find(contact => contact.cpf === cpf);
 }
 
-// UPDATE
+// UPDATE (atualiza um contato existente)
 export function updateContact(userId: string, id: string, updatedData: Partial<IContact>) {
   const contacts = getContacts(userId);
   const index = contacts.findIndex(c => c.id === id);
@@ -75,14 +78,14 @@ export function updateContact(userId: string, id: string, updatedData: Partial<I
   saveContacts(userId, contacts);
 }
 
-// DELETE
+// DELETE um contato específico
 export function deleteContact(userId: string, id: string) {
   const contacts = getContacts(userId);
   const filtered = contacts.filter(contact => contact.id !== id);
   saveContacts(userId, filtered);
 }
 
-// DELETE ALL CONTACTS
+// DELETE todos os contatos de um usuário (usado ao excluir a conta)
 export function deleteAllContacts(userId: string) {
   localStorage.removeItem(getStorageKey(userId));
 }

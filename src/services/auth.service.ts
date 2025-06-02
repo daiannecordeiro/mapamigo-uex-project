@@ -54,7 +54,7 @@ export function updateCurrentUser(updatedData: Partial<User>): string | null {
   return null;
 }
 
-// DELETE: remove conta do usuário logado
+// DELETE: remove conta do usuário logado e todos os seus contatos
 export function deleteAccount(): string | null {
   const currentUser = getCurrentUser();
   if (!currentUser) return 'Nenhum usuário logado.';
